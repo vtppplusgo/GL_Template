@@ -36,10 +36,6 @@ Renderer::Renderer(int width, int height){
 	// Create point lights.
 	const float lI = 6.0; // Light intensity.
 	std::vector<glm::vec3> colors = { glm::vec3(lI,0.0,0.0), glm::vec3(0.0,lI,0.0), glm::vec3(0.0,0.0,lI), glm::vec3(lI,lI,0.0)};
-	for(size_t i = 0; i < 4; ++i){
-		glm::vec3 position = glm::vec3(-1.0f+2.0f*(i%2),-0.1f,-1.0f+2.0f*(i/2));
-		_pointLights.emplace_back(position, colors[i], 0.7f);
-	}
 	
 	PointLight::loadProgramAndGeometry();
 	
@@ -226,7 +222,7 @@ void Renderer::physics(double elapsedTime){
 	_camera.update(elapsedTime);
 	
 	// Update lights.
-	_directionalLights[0].update(glm::vec3(2.0f, 1.5f + sin(0.5*_timer),2.0f), _camera.view());
+	_directionalLights[0].update(glm::vec3(2.0f, 1.5f, 2.0f), _camera.view());
 	
 	for(size_t i = 0; i <_pointLights.size(); ++i){
 		auto& pointLight = _pointLights[i];
