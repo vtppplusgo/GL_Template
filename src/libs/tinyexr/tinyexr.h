@@ -439,7 +439,8 @@ extern int LoadEXRFromMemory(float *out_rgba, const unsigned char *memory,
 
 #if TINYEXR_USE_MINIZ
 #else
-#include "zlib.h"
+// Disable this include to use external miniz version.
+//#include "zlib.h"
 #endif
 
 #if TINYEXR_USE_ZFP
