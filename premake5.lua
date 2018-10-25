@@ -8,6 +8,7 @@ if os.ishost("windows") then
 end
 cwd = os.getcwd()
 
+vulkandsdk = os.getenv("VULKAN_SDK")
 -- Workspace definition.
 
 workspace("GL_Template")
@@ -53,19 +54,21 @@ function GraphicsSetup()
 	CPPSetup()
 
 	-- To support angled brackets in Xcode.
-	sysincludedirs({ "src/libs/", "src/libs/glfw/include/" })
+	sysincludedirs({ "src/libs/", "src/libs/glfw/include/", vulkandsdk.."/include/" })
 
 	-- Libraries for each platform.
 	if os.istarget("macosx") then
-		libdirs({"src/libs/glfw/lib-mac/", "src/libs/nfd/lib-mac/"})
-		links({"glfw3", "nfd", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
+		libdirs({"src/libs/glfw/lib-mac/", "src/libs/nfd/lib-mac/", vulkandsdk.."/lib"})
+		-- Add the vulkan sdk dylib path.
+		linkoptions { "-Wl,-rpath,"..vulkandsdk.."/lib/" }
+		links({"glfw3", "nfd", "vulkan", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
 	elseif os.istarget("windows") then
-		libdirs({"src/libs/glfw/lib-win-vc2015-64/", "src/libs/nfd/lib-win-vc2017-64/"})
-		links({"glfw3", "nfd", "opengl32", "comctl32"})
+		libdirs({"src/libs/glfw/lib-win-vc2015-64/", "src/libs/nfd/lib-win-vc2017-64/", vulkandsdk.."/lib"})
+		links({"glfw3", "nfd", "vulkan-1", "opengl32", "comctl32"})
 	else -- Assume linux
 		-- Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...	
-		libdirs({ os.findlib("glfw3"), os.findlib("nfd") })
-		links({"glfw3", "nfd", "GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl", "gtk+-3.0"})
+		libdirs({ os.findlib("glfw3"), os.findlib("nfd"), vulkandsdk.."/lib" })
+		links({"glfw3", "nfd", "vulkan", "GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl", "gtk+-3.0"})
 	end
 
 end
@@ -107,6 +110,11 @@ project("Engine")
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
 			"resources/shaders/**.vert", "resources/shaders/**.frag", "resources/shaders/**.geom",
 			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h"
+	})
+
+	postbuildcommands({
+		path.translate( "{CHDIR} "..os.getcwd(), sep),
+		path.translate( "{COPY} "..vulkandsdk.."/lib/libvulkan.1.dylib".." build/"..copyFix, sep)
 	})
 
 
