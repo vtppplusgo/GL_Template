@@ -2,6 +2,7 @@
 #include "../Common.hpp"
 #include "../input/InputCallbacks.hpp"
 #include "../input/Input.hpp"
+#include "../graphics/GPU.hpp"
 
 #include <nfd/nfd.h>
 
@@ -12,71 +13,47 @@ namespace Interface {
 	void setupImGui(GLFWwindow * window){
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
+#if defined(OPENGL_BACKEND)
 		ImGui_ImplGlfw_InitForOpenGL(window, false);
 		ImGui_ImplOpenGL3_Init("#version 150");
+#elif defined(VULKAN_BACKEND)
+		ImGui_ImplGlfw_InitForVulkan(window, false);
+		
+#endif
 		ImGui::StyleColorsDark();
 	}
 		
 	void beginFrame(){
+#if defined(OPENGL_BACKEND)
 		ImGui_ImplOpenGL3_NewFrame();
+#elif defined(VULKAN_BACKEND)
+#endif
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 	}
 	
 	void endFrame(){
 		ImGui::Render();
+#if defined(OPENGL_BACKEND)
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#elif defined(VULKAN_BACKEND)
+#endif
+		
 	}
 	
 	void clean(){
+#if defined(OPENGL_BACKEND)
 		ImGui_ImplOpenGL3_Shutdown();
+#elif defined(VULKAN_BACKEND)
+#endif
+		
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 	}
 	
 	GLFWwindow* initWindow(const std::string & name, Config & config){
-		// Initialize glfw, which will create and setup an OpenGL context.
-		if (!glfwInit()) {
-			Log::Error() << Log::OpenGL << "Could not start GLFW3" << std::endl;
-			return nullptr;
-		}
 		
-		glfwWindowHint (GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint (GLFW_CONTEXT_VERSION_MINOR, 2);
-		glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		
-		GLFWwindow * window;
-		
-		if(config.fullscreen){
-			const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-			glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-			glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-			glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-			glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-			window = glfwCreateWindow(mode->width, mode->height, name.c_str(), glfwGetPrimaryMonitor(), NULL);
-		} else {
-			// Create a window with a given size. Width and height are defined in the configuration.
-			window = glfwCreateWindow(config.initialWidth, config.initialHeight, name.c_str(), NULL, NULL);
-		}
-		
-		if (!window) {
-			Log::Error() << Log::OpenGL << "Could not open window with GLFW3" << std::endl;
-			glfwTerminate();
-			return nullptr;
-		}
-		
-		// Bind the OpenGL context and the new window.
-		glfwMakeContextCurrent(window);
-		
-		if (gl3wInit()) {
-			Log::Error() << Log::OpenGL << "Failed to initialize OpenGL" << std::endl;
-			return nullptr;
-		}
-		if (!gl3wIsSupported(3, 2)) {
-			Log::Error() << Log::OpenGL << "OpenGL 3.2 not supported\n" << std::endl;
-			return nullptr;
-		}
+		GLFWwindow * window = GPU::device().createWindow(name, config);
 		
 		// Setup callbacks for various interactions and inputs.
 		glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
@@ -90,7 +67,7 @@ namespace Interface {
 		glfwSwapInterval(config.vsync ? 1 : 0);						// 60 FPS V-sync
 		
 		/// \todo Rethink the way we can enable/disable ImGui?
-		setupImGui(window);
+		//setupImGui(window);
 		
 		// Check the window size (if we are on a screen smaller than the initial size).
 		int wwidth, wheight;
@@ -107,13 +84,6 @@ namespace Interface {
 		Input::manager().densityEvent(config.screenDensity);
 		// Update the resolution.
 		Input::manager().resizeEvent(width, height);
-		
-		// Default OpenGL state, just in case.
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_BLEND);
 		
 		return window;
 	}

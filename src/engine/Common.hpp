@@ -9,8 +9,18 @@
 #ifndef Common_hpp
 #define Common_hpp
 
+#define VULKAN_BACKEND
+
+#if defined(VULKAN_BACKEND)
+#define GLFW_INCLUDE_VULKAN
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_FORCE_RADIANS
+#include <gl3w/gl3w.h> //temporary.
+#include <GLFW/glfw3.h>
+#elif defined(OPENGL_BACKEND)
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
+#endif
 
 #include "helpers/Logger.hpp"
 
