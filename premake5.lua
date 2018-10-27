@@ -9,6 +9,9 @@ end
 cwd = os.getcwd()
 
 vulkandsdk = os.getenv("VULKAN_SDK")
+vulkanlayers = vulkandsdk.."/etc/vulkan/explicit_layer.d"
+vulkanicd = vulkandsdk.."/etc/vulkan/icd.d/MoltenVK_icd.json"
+
 -- Workspace definition.
 
 workspace("GL_Template")
@@ -27,6 +30,8 @@ workspace("GL_Template")
 		defines({ "NDEBUG" })
 		optimize("On")
 	filter({})
+	debugenvs({ "VK_LAYER_PATH="..vulkanlayers, "VK_ICD_FILENAMES="..vulkanicd })
+
 
 
 -- Helper functions for the projects.
@@ -71,6 +76,7 @@ function GraphicsSetup()
 		links({"glfw3", "nfd", "vulkan", "GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl", "gtk+-3.0"})
 	end
 
+
 end
 
 
@@ -112,17 +118,17 @@ project("Engine")
 			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h"
 	})
 
-	postbuildcommands({
-		path.translate( "{CHDIR} "..os.getcwd(), sep),
-		path.translate( "{COPY} "..vulkandsdk.."/lib/libvulkan.1.dylib".." build/"..copyFix, sep)
-	})
-
 
 group("Apps")
 
 project("PBRDemo")
 	AppSetup()
 	files({ "src/apps/pbrdemo/**.hpp", "src/apps/pbrdemo/**.cpp", })
+
+
+project("VulkanTest")
+	AppSetup()
+	files({ "src/apps/vulkan-test/**.hpp", "src/apps/vulkan-test/**.cpp", })
 
 project("Playground")
 	AppSetup()
@@ -165,7 +171,7 @@ group("Meta")
 project("ALL")
 	CPPSetup()
 	kind("ConsoleApp")
-	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "SHExtractor" })
+	dependson( {"Engine", "PBRDemo", "VulkanTest", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "SHExtractor" })
 
 -- Actions
 
