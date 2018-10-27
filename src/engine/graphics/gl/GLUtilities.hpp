@@ -2,9 +2,9 @@
 #define GLUtilities_h
 #include <map>
 
-#include "../Common.hpp"
-#include "../resources/MeshUtilities.hpp"
-#include "Framebuffer.hpp"
+#include "../../Common.hpp"
+#include "../../resources/MeshUtilities.hpp"
+#include "../Framebuffer.hpp"
 
 /**
  \addtogroup Graphics

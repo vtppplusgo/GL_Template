@@ -1,5 +1,5 @@
 #include "FramebufferCube.hpp"
-#include "GLUtilities.hpp"
+#include "gl/GLUtilities.hpp"
 
 
 FramebufferCube::FramebufferCube(unsigned int side, const Framebuffer::Descriptor & descriptor, bool depthBuffer) {

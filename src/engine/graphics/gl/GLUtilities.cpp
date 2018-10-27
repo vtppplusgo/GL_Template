@@ -1,5 +1,5 @@
 #include "GLUtilities.hpp"
-#include "../resources/ImageUtilities.hpp"
+#include "../../resources/ImageUtilities.hpp"
 
 std::string getGLErrorString(GLenum error) {
 	std::string msg;

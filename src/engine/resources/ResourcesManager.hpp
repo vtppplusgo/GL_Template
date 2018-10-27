@@ -1,7 +1,7 @@
 #ifndef ResourcesManager_h
 #define ResourcesManager_h
 #include "../Common.hpp"
-#include "../graphics/GLUtilities.hpp"
+#include "../graphics/gl/GLUtilities.hpp"
 #include "../graphics/ProgramInfos.hpp"
 
 /**

@@ -1,5 +1,5 @@
 #include "Framebuffer.hpp"
-#include "GLUtilities.hpp"
+#include "gl/GLUtilities.hpp"
 
 Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat)}, depthBuffer) {
 	

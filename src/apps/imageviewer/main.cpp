@@ -6,7 +6,7 @@
 #include "helpers/InterfaceUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/gl/GLUtilities.hpp"
 #include "resources/ImageUtilities.hpp"
 #include "Config.hpp"
 

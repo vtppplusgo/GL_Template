@@ -1,6 +1,6 @@
 #include "ProgramInfos.hpp"
 
-#include "GLUtilities.hpp"
+#include "gl/GLUtilities.hpp"
 #include "../resources/ResourcesManager.hpp"
 
 
