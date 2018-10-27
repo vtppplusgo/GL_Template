@@ -9,6 +9,7 @@
 #ifndef Common_hpp
 #define Common_hpp
 
+//#define OPENGL_BACKEND
 #define VULKAN_BACKEND
 
 #if defined(VULKAN_BACKEND)

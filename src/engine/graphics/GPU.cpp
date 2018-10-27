@@ -31,6 +31,13 @@ bool GPU::nextFrame(){
 	return VKacquireNextFrame();
 #elif defined(OPENGL_BACKEND)
 	// Nothing to do.
+	// Temporary: example for debug.
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+	glClearDepth(1.0f);
+	glClearStencil(0);
+	glViewport(0.0f, 0.0f, Input::manager().size()[0], Input::manager().size()[1]);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #endif
 	return true;
 	
@@ -49,6 +56,8 @@ bool GPU::swap(GLFWwindow * window){
 			glfwWaitEvents();
 		}
 		Input::manager().resizeEvent(width, height);
+		width = Input::manager().size()[0];
+		height = Input::manager().size()[1];
 	}
 	// Swap.
 	return VKswap(resizeDetected, width, height);
