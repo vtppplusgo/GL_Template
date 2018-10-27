@@ -18,7 +18,9 @@ public:
 	
 	void clean();
 	
-	void swap(GLFWwindow * window);
+	bool nextFrame();
+	
+	bool swap(GLFWwindow * window);
 	
 private:
 	

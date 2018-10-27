@@ -11,37 +11,28 @@
 class VKSwapchain;
 
 struct VKGPUInternalState {
+	
 	VkInstance instance;
 	VkSurfaceKHR surface;
-	
+	// Devices
 	VkPhysicalDevice physicalDevice;
 	VkDevice device;
-	
+	// Queues
 	VkQueue graphicsQueue;
 	VkQueue presentQueue;
 	
 	VkCommandPool commandPool;
+	VKSwapchain * swapchain;
+	std::vector<VkFence> fences;
 	
-	VKSwapchain * swapchain; //Todo maybe in another way... a struct?
+	// Internal references.
+	VkResult currentStatus;
+	VkCommandBuffer * currentCommandBuffer;
 	
-	//
-	//std::vector<VkCommandBuffer> commandBuffers; in swapchain too ?
-	
-	
-	
-	//std::vector<VkSemaphore> imageAvailableSemaphores;
-	//std::vector<VkSemaphore> renderFinishedSemaphores;
-	//std::vector<VkFence> inFlightFences;
-	
-	
-	
-	//uint32_t imageIndex;
-	//VkRenderPass finalRenderPass;
-	// Infos
+	// Parameters.
 	bool debugLayersEnabled;
 	VkDeviceSize minUniformOffset;
-	//int maxInFlight = 2;
-	
+	uint32_t maxInFlight;
 };
 
 #endif

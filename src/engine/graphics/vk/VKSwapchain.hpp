@@ -11,6 +11,8 @@
 
 #include "../../Common.hpp"
 
+#ifdef VULKAN_BACKEND
+
 #include "VKUtilities.hpp"
 #include "VKInternalState.hpp"
 
@@ -25,6 +27,18 @@ public:
 	
 	void clean(VKGPUInternalState & state);
 	
+	VkResult acquireNextFrame(VKGPUInternalState & state, VkRenderPassBeginInfo & infos);
+	
+	void presentCurrentFrame(VKGPUInternalState & state, VkPresentInfoKHR & presentInfo);
+	
+	const uint32_t currentFrame() const { return _currentFrame; }
+	
+	void step(){ _currentFrame = (_currentFrame + 1) % _maxInFlight; }
+	
+	VkCommandBuffer & getCommandBuffer(){ return _commandBuffers[_imageIndex]; }
+	VkSemaphore & getStartSemaphore(){ return _imageAvailableSemaphores[_currentFrame]; }
+	VkSemaphore & getEndSemaphore(){ return _renderFinishedSemaphores[_currentFrame]; }
+	
 private:
 	
 	void setup(VKGPUInternalState & state, const int width, const int height);
@@ -34,26 +48,27 @@ private:
 	void createFinalRenderpass(VKGPUInternalState & state);
 	
 	VKUtilities::SwapchainParameters _parameters;
-	//VkSurfaceKHR _surface;
-	//VkQueue _presentQueue;
 	std::vector<VkCommandBuffer> _commandBuffers;
 	
 	VkSwapchainKHR _swapchain;
 	std::vector<VkImage> _swapchainImages;
 	std::vector<VkImageView> _swapchainImageViews;
 	std::vector<VkFramebuffer> _swapchainFramebuffers;
+	
 	VkImage _depthImage;
 	VkDeviceMemory _depthImageMemory;
 	VkImageView _depthImageView;
+	
 	uint32_t _maxInFlight;
+	uint32_t _currentFrame;
+	uint32_t _imageIndex; // /!\ different from current frame.
 	
 	VkRenderPass finalRenderPass;
-	//std::vector<VkSemaphore> _imageAvailableSemaphores;
-	//std::vector<VkSemaphore> _renderFinishedSemaphores;
-	//std::vector<VkFence> _inFlightFences;
 	
-	//uint32_t currentFrame;
+	std::vector<VkSemaphore> _imageAvailableSemaphores;
+	std::vector<VkSemaphore> _renderFinishedSemaphores;
 	
 };
 
-#endif /* Swapchain_hpp */
+#endif
+#endif 

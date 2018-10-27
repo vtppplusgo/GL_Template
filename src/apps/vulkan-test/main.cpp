@@ -48,9 +48,9 @@ int main(int argc, char** argv) {
 		// Start a new frame for the interface.
 		//Interface::beginFrame();
 		// Reload resources.
-		//if(Input::manager().triggered(Input::KeyP)){
-		//	Resources::manager().reload();
-		//}
+		if(Input::manager().triggered(Input::KeyP)){
+			//Resources::manager().reload();
+		}
 		
 		// Compute the time elapsed since last frame
 		const double currentTime = glfwGetTime();
@@ -74,28 +74,14 @@ int main(int argc, char** argv) {
 		}
 		
 		// Render.
-		const glm::vec2 screenSize = Input::manager().size();
-		const glm::mat4 MVP = camera.projection() * camera.view();
-		/*glViewport(0, 0, (GLsizei)screenSize[0], (GLsizei)screenSize[1]);
-		glClearColor(0.2f, 0.3f, 0.25f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(program->id());
-		glUniformMatrix4fv(program->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glBindVertexArray(mesh.vId);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eId);
-		glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
-		glBindVertexArray(0);
-		glUseProgram(0);
-		ImGui::Text("ImGui is functional!");*/
-		
-		// Then render the interface.
-		//Interface::endFrame();
-		//Display the result for the current rendering loop.
-		//glfwSwapBuffers(window);
-		
-
-		GPU::device().swap(window);
-
+		const bool gpuReady = GPU::device().nextFrame();
+		if(gpuReady){
+			
+		}
+		const bool gpuOk = GPU::device().swap(window);
+		if(!gpuOk){
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
 	}
 	
 

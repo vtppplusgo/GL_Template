@@ -8,7 +8,9 @@
 
 GLFWwindow * VKcreateWindow(const std::string & name, Config & config);
 
-void VKresizeSwapchain(const unsigned int width, const unsigned int height);
+bool VKacquireNextFrame();
+
+bool VKswap(bool resizedDetected, unsigned int width, unsigned int height);
 
 void VKclean();
 

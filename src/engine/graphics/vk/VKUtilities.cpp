@@ -465,8 +465,8 @@ VkImageView VKUtilities::createImageView(const VkDevice & device, const VkImage 
 void VKUtilities::transitionImageLayout(const VkDevice & device, const VkCommandPool & commandPool, const VkQueue & queue, VkImage & image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, const bool cube, const uint32_t & mipCount) {
 	VkCommandBuffer commandBuffer = beginOneShotCommandBuffer(device, commandPool);
 	
-	VkPipelineStageFlags sourceStage;
-	VkPipelineStageFlags destinationStage;
+	VkPipelineStageFlags sourceStage = 0;
+	VkPipelineStageFlags destinationStage = 0;
 	
 	VkImageMemoryBarrier barrier = {};
 	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
