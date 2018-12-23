@@ -8,6 +8,9 @@
 
 #include "VKInternalState.hpp"
 
+/*VkDeviceSize VKUtilities::nextOffset(size_t size){
+ return (size/VulkanUtilities::uniformOffset+1)*VulkanUtilities::uniformOffset;
+ }*/
 
 VKGPUInternalState vkState;
 
